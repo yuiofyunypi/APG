@@ -1,0 +1,234 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}{% endblock %}
+{% block content %}
+<!--<script type="text/javascript" src="http://apps.bdimg.com/libs/vue/1.0.14/vue.min.js"></script>-->
+<script type="text/javascript" src="http://apps.bdimg.com/libs/vue/1.0.14/vue.js"></script>
+
+<script type="text/javascript">
+	Vue.component('file-loader',{
+		template:"<input model='filebody' type='file' @change='changed'>",
+		props:{
+			upload_url:{
+				type: String,
+      			required: true
+			},
+			url:{
+				type: String,
+				twoWay:true
+			},
+			ready:{},
+			},
+		methods:{
+			changed:function (changeEvent) {
+				file=changeEvent.target.files[0]
+				this.fd = new FormData();
+				this.fd.append('file', file)
+				this.ready=true
+				alert(file)
+			},
+			upload:function () {
+				var self =this
+				$.ajax({
+					//'/studio/upload/logo/?studio=name'
+					url:this.upload_url,
+					type:'post',
+					data:this.fd,
+					contentType: false,
+					cache: false,
+					success:function (data) {
+						alert(data)
+						self.url=data.url
+						//self.$emit('url.changed',data.url)
+					},
+					processData:false,
+				})
+				
+			}
+		}
+	})
+	//<button @click='upload'>upload</button><img v-show='url' :src='url' >
+</script>
+
+
+<script type="text/javascript">
+	
+	studio={{studio | safe}}
+	//{
+	//	pk:'{{studio.pk}}'
+	//	name:'{{studio.name}}',
+	//	logo:'{{studio.logo}}',
+	//}
+	
+
+	Vue.config.delimiters = ['[[', ']]']
+
+	Vue.component('second-page',{template:'#second-page'})
+
+	$(function () {
+		new Vue({
+			el:'#vue_content',
+			data:{
+				studio:studio,
+				face_page:'first-page'
+			},
+			methods:{
+				save:function () {
+					alert('wahaha')
+					var post_data={
+						save_studio:{studio:studio}
+					}
+					$.post('',JSON.stringify(post_data),function (data) {
+						alert(data)
+					})
+				}
+			}
+		})
+	})
+</script>
+
+
+<style type="text/css" media="screen" id="test">
+	#logo_div{
+		width:200px;
+		height:100px;
+		border: 1px solid #999;
+	}
+	.menu li{
+		display: inline-block;
+		padding: 20px;
+	}
+	.menu .active{
+		border-bottom: 1px solid red;
+	}
+	.fieldWrapper input,.fieldWrapper textarea{
+		width:90%;
+	}
+	.fieldWrapper input{
+		height:30px;
+	}
+	.cell{
+		vertical-align: top;
+		width:45%;
+		display: inline-block;
+	}
+	.row-title{
+		margin-top:30px;
+		margin-bottom:30px;
+		
+	}
+</style>
+
+<script type="text/javascript">
+	fields=[
+		{name:'logo',type:'logo',label:'Logo'},
+		{name:'link_ios',type:'text',label:'Link IOS'},
+		{name:'link_gp',type:'text',label:'Link GooglePlay'},
+		{name:'link_face',type:'text',label:'Link FaceBook'},
+		{name:'link_twit',type:'text',label:'Link Twitter'},
+		{name:'dsp',type:'area',label:'description'},
+	]
+
+	Vue.component('field',{
+		template:'#field',
+		props:['name'],
+		data:function () {
+			return {
+				fields:fields,
+				studio:studio,
+			}
+		},
+		beforeCompile:function () {
+			for(i in fields){
+				if(fields[i].name==this.name){
+					this.item=fields[i]
+					break
+				}
+			}
+		},
+		
+	})
+	Vue.component('first-page',{
+		template:'#first-page',
+		data:function () {
+			return {
+				studio:studio
+			}
+		},
+		props:['editable'],
+	})
+</script>
+
+<template id='first-page'>
+	<div>
+		<div>
+			<label for="id_for_logo">Logo</label>
+			<file-loader id='id_for_logo' 
+				accept='image/gif, image/jpeg,image/png' 
+				v-ref:logo 
+				upload_url='/studio/upload/logo/?studio=name' 
+				:url.sync='studio.logo'>
+			</file-loader>
+			<button @click='$refs.logo.upload()' :disabled='!$refs.logo.ready'>Upload Logo Image</button>
+			<img :src="studio.logo" alt="" v-if='studio.logo'>
+		</div>
+
+		
+		<div class='_row'>
+			<h2 class='row-title'>Base Info</h2>
+			<div class='cell'>
+			</div>
+		</div>
+
+		
+		<div class='_row'>
+			<h2 class='row-title'>Link</h2>
+			<div class='cell'>
+				<field name='link_ios'></field>
+				<field name='link_gp'></field>
+				<field name='link_face'></field>
+				<field name='link_twit'></field>
+			</div>
+			<div class='cell'>
+				<field name='dsp'></field>
+			</div>
+		</div>
+	</div>
+	
+</template>
+
+<template id='second-page'>
+	<div>
+		this is second-page
+	</div>
+</template>
+
+<div id='vue_content'>
+	<div id='logo_div'>
+		<h1>[[studio.name]]</h1>
+	</div>
+	
+	<ul class='menu'>
+		<li @click="face_page='first-page'" :class="{'active':face_page=='first-page'}">Studio Infomation</li>
+		<li @click="face_page='second-page'" :class="{'active':face_page=='second-page'}">Apps</li>
+	</ul>
+
+	<button name="test" type="button" value="val" @click="save()">Save</button>
+
+	<first-page v-show='face_page=="first-page"'></first-page>
+	<second-page v-show='face_page=="second-page"'></second-page>
+
+</div>
+
+<template id='field'>
+	<div class="fieldWrapper">
+	    <label for="[['id_'+name]]">[[item.label]]</label>
+	    <input id="[['id_'+name]]" v-if='item.type=="text"' type="text" v-model='studio[name]'>
+		<textarea id="[['id_'+name]]" rows="10" cols="10" v-if="item.type=='area'" v-model='studio[name]'></textarea>
+	    <slot>
+	    </slot>
+	    
+	</div>
+</template>
+
+{% endblock %}

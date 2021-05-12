@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}{% endblock %}
+{% block content %}
+<script type="text/javascript" src="http://apps.bdimg.com/libs/vue/1.0.14/vue.min.js"></script>
+<script type="text/javascript">
+	heads=[{name:'name',label:'Name'},
+		{name:'logo',label:'Logo'},
+		{name:'dsp',label:'Desp'},
+		{name:'link_ios',label:'link IOS'},
+		{name:'link_gp',label:'link Google'},
+		{name:'link_face',label:'link Facebook'},
+		{name:'link_twit',label:'link twitter'},
+		//{name:'email'},
+		//{name:'policy'},
+		//{name:'ga_key'},
+		//{name:'fea_app'}
+	]
+	
+	studios=[
+		{name:'studio1',logo:'url1'}
+	]
+
+	Vue.config.delimiters = ['[[', ']]']
+
+	Vue.component('table-head',{
+		template:'#table_head',
+		props:['heads'],
+	})
+	$(function () {
+		new Vue({
+			el:'#vue_content',
+			data:{
+				studios:studios,
+				heads:heads
+			}
+		})
+	})
+</script>
+
+<template id='table_head'>
+	<thead>
+		<tr>
+			<th v-for='h in heads'>[[h.label]]</th>
+		</tr>
+	</thead>
+</template>
+
+
+
+<div id='vue_content'>
+	<table class="table table-striped">
+		<!--<thead is=table-head :heads='heads'></thead>-->
+		<thead>
+			<tr>
+				<th width='20px'></th>
+				<th v-for='h in heads'>[[h.label]]</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr v-for='row in studios'>
+				<td><input type="checkbox"></td>
+				<td v-for='h in heads'>
+					[[row[h.name] ]]
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<ul>
+		<li v-for='item in studios'>
+			[[item.name]]
+		</li>
+	</ul>
+</div>
+
+{% endblock %}

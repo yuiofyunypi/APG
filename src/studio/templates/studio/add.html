@@ -1,0 +1,52 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}{% endblock %}
+{% block content %}
+<script type="text/javascript" src="http://apps.bdimg.com/libs/vue/1.0.14/vue.min.js"></script>
+<script type="text/javascript">
+	
+	$(function () {
+		new Vue({
+			el:'#vue_content',
+			data:{
+			},
+			methods:{
+				save:function () {
+					var post_data={
+						add_studio:{name:'dog'}
+					}
+					$.post('',JSON.stringify(post_data),function (data) {
+						alert(data.add_studio.status)
+					})
+				}
+			}
+		})
+	})
+</script>
+
+<template id='table_head'>
+	<thead>
+		<tr>
+			<th v-for='h in heads'>[[h.label]]</th>
+		</tr>
+	</thead>
+</template>
+
+
+<div id='vue_content'>
+	
+	<div style='height:200px;text-align: center;'>
+		<h2>Find Your Studio</h2> 
+		<p>If your app is in the App Store, enter the app name below.</p>
+
+		<select name="" id="" width='300px'>
+			<option value="">aaa</option>
+		</select>
+	</div>
+	
+<button name="test" type="button" value="val" @click="save()">Save</button>
+
+	
+</div>
+
+{% endblock %}

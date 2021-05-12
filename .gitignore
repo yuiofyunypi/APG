@@ -1,0 +1,9 @@
+src/settings/__init__.py
+src/settings/dev.py
+.settings/
+.idea
+*.pyc
+media/
+run/
+imported_employees/
+upload_file/
