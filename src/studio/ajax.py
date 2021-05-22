@@ -15,3 +15,5 @@ def save_studio(studio):
         obj=from_dict(studio)
         obj.save()
         return {'status':'success'}
+    else:
+        return {'errors':form.errors}

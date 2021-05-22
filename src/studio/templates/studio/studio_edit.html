@@ -6,6 +6,7 @@
 <script type="text/javascript" src="http://apps.bdimg.com/libs/vue/1.0.14/vue.js"></script>
 
 <script type="text/javascript">
+	Vue.config.debug = true
 	Vue.component('file-loader',{
 		template:"<input model='filebody' type='file' @change='changed'>",
 		props:{
@@ -51,6 +52,9 @@
 </script>
 
 
+
+
+<!--------------------main-fram---------------------------------->
 <script type="text/javascript">
 	
 	studio={{studio | safe}}
@@ -64,22 +68,31 @@
 	Vue.config.delimiters = ['[[', ']]']
 
 	Vue.component('second-page',{template:'#second-page'})
-
+	errors={}
 	$(function () {
-		new Vue({
+		var t=new Vue({
 			el:'#vue_content',
 			data:{
 				studio:studio,
-				face_page:'first-page'
+				face_page:'first-page',
+				errors:errors,
 			},
 			methods:{
 				save:function () {
 					alert('wahaha')
+					var self=this;
 					var post_data={
 						save_studio:{studio:studio}
 					}
 					$.post('',JSON.stringify(post_data),function (data) {
 						alert(data)
+						t.$refs.fp.update_errors(data.save_studio.errors)
+						//for(k in data.save_studio.errors){
+						//	Vue.set(errors,k,data.save_studio.errors[k])
+						//}
+						//this.errors=data.save_studio.errors
+						//t.$refs.fp.$set('errors',data.save_studio.errors)
+						//Vue.set(window,'errors',)
 					})
 				}
 			}
@@ -87,39 +100,28 @@
 	})
 </script>
 
+<div id='vue_content'>
+	<div id='logo_div'>
+		<h1 v-text='studio.name'></h1>
+	</div>
+	
+	<ul class='menu'>
+		<li @click="face_page='first-page'" 
+			:class="{'active':face_page=='first-page'}">Studio Infomation</li>
+		<li @click="face_page='second-page'" 
+			:class="{'active':face_page=='second-page'}">Apps</li>
+	</ul>
 
-<style type="text/css" media="screen" id="test">
-	#logo_div{
-		width:200px;
-		height:100px;
-		border: 1px solid #999;
-	}
-	.menu li{
-		display: inline-block;
-		padding: 20px;
-	}
-	.menu .active{
-		border-bottom: 1px solid red;
-	}
-	.fieldWrapper input,.fieldWrapper textarea{
-		width:90%;
-	}
-	.fieldWrapper input{
-		height:30px;
-	}
-	.cell{
-		vertical-align: top;
-		width:45%;
-		display: inline-block;
-	}
-	.row-title{
-		margin-top:30px;
-		margin-bottom:30px;
-		
-	}
-</style>
+	<button name="test" type="button" value="val" @click="save()">Save</button>
 
-<script type="text/javascript">
+	<first-page v-show='face_page=="first-page"' v-ref:fp ></first-page>
+	<second-page v-show='face_page=="second-page"'></second-page>
+
+</div>
+
+
+<!------------------------first-page------------------>
+<script for='first-page' type="text/javascript" >
 	fields=[
 		{name:'logo',type:'logo',label:'Logo'},
 		{name:'link_ios',type:'text',label:'Link IOS'},
@@ -128,7 +130,7 @@
 		{name:'link_twit',type:'text',label:'Link Twitter'},
 		{name:'dsp',type:'area',label:'description'},
 	]
-
+	
 	Vue.component('field',{
 		template:'#field',
 		props:['name'],
@@ -136,6 +138,7 @@
 			return {
 				fields:fields,
 				studio:studio,
+				errors:this.$parent.errors,
 			}
 		},
 		beforeCompile:function () {
@@ -146,21 +149,55 @@
 				}
 			}
 		},
+		components:{
+			text:{
+				props:['name'],
+				template:'<input type="text">'
+			},
+			area:{
+				props:['name'],
+				template:'<textarea rows="10" cols="10" ></textarea>'
+			}
+		},
+		methods:{
+			error_data:function (name) {
+				if(this.errors[name]){
+					return this.errors[name]
+				}else{
+					return 'ss'
+				}
+			}
+		}
 		
 	})
-	Vue.component('first-page',{
+	var page1=Vue.component('first-page',{
 		template:'#first-page',
 		data:function () {
 			return {
-				studio:studio
+				studio:studio,
+				errors:errors,
 			}
 		},
-		props:['editable'],
+		props:['editable',],
+		methods:{
+			mock:function () {
+				Vue.set(errors,'link_gp',['erro is error','jj yy'])
+			},
+			update_errors:function (errors) {
+				for(k in errors){
+					Vue.set(this.errors,k,errors[k])
+					//this.$set('errors')
+				}
+			}
+		}
+
 	})
 </script>
 
 <template id='first-page'>
+
 	<div>
+		<button name="test" type="button" value="val" @click='mock()'>Button Text</button>
 		<div>
 			<label for="id_for_logo">Logo</label>
 			<file-loader id='id_for_logo' 
@@ -197,38 +234,58 @@
 	
 </template>
 
+<template id='field'>
+	<div class="fieldWrapper">
+	    <label for="[['id_'+name]]">[[item.label]]</label>
+	    <component :is='item.type' 
+	    	v-model='studio[name]' 
+	    	:name='name' 
+	    	id="[['id_'+name]]"></component> 
+		<span v-text='error_data(name)' class='error'></span>
+	    <slot>
+	    </slot>
+	    
+	</div>
+</template>
+
+<!------------------second-page---------------------->
 <template id='second-page'>
 	<div>
 		this is second-page
 	</div>
 </template>
 
-<div id='vue_content'>
-	<div id='logo_div'>
-		<h1>[[studio.name]]</h1>
-	</div>
-	
-	<ul class='menu'>
-		<li @click="face_page='first-page'" :class="{'active':face_page=='first-page'}">Studio Infomation</li>
-		<li @click="face_page='second-page'" :class="{'active':face_page=='second-page'}">Apps</li>
-	</ul>
+<!-------------------over----------------------------->
+<style type="text/css" media="screen" id="test">
+	#logo_div{
+		width:200px;
+		height:100px;
+		border: 1px solid #999;
+	}
+	.menu li{
+		display: inline-block;
+		padding: 20px;
+	}
+	.menu .active{
+		border-bottom: 1px solid red;
+	}
+	.fieldWrapper input,.fieldWrapper textarea{
+		width:90%;
+	}
+	.fieldWrapper input{
+		height:30px;
+	}
+	.cell{
+		vertical-align: top;
+		width:45%;
+		display: inline-block;
+	}
+	.row-title{
+		margin-top:30px;
+		margin-bottom:30px;
+		
+	}
+</style>
 
-	<button name="test" type="button" value="val" @click="save()">Save</button>
-
-	<first-page v-show='face_page=="first-page"'></first-page>
-	<second-page v-show='face_page=="second-page"'></second-page>
-
-</div>
-
-<template id='field'>
-	<div class="fieldWrapper">
-	    <label for="[['id_'+name]]">[[item.label]]</label>
-	    <input id="[['id_'+name]]" v-if='item.type=="text"' type="text" v-model='studio[name]'>
-		<textarea id="[['id_'+name]]" rows="10" cols="10" v-if="item.type=='area'" v-model='studio[name]'></textarea>
-	    <slot>
-	    </slot>
-	    
-	</div>
-</template>
 
 {% endblock %}

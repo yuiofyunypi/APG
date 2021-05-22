@@ -1,5 +1,5 @@
 
-from django.forms import Form,ModelForm
+from django.forms import Form,ModelForm,ValidationError
 from models import Studio
 
 
@@ -18,4 +18,27 @@ class StudioForm(ModelForm):
     class Meta:
         model = Studio
         fields = ['logo','dsp','link_ios','link_gp','link_face','link_twit','email','policy','ga_key','fea_app']
+    
+    
+    def clean_email(self):
+        email= self.cleaned_data.get('email')
+        if not email:
+            raise ValidationError('Need Email')
+        else:
+            return email
+    
+    
+    def clean_link_gp(self):
+        link_gp= self.cleaned_data.get('link_gp')
+        if not link_gp:
+            raise ValidationError('Need link_gp')
+        else:
+            return link_gp 
+    
+    def clean_link_face(self):
+        link_face= self.cleaned_data.get('link_face')
+        if not link_face:
+            raise ValidationError('Need link_face')
+        else:
+            return link_face     
     
