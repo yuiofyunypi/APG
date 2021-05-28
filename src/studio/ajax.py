@@ -1,10 +1,13 @@
 from forms import StudioForm
 from common.db_tools import from_dict
+from models import Studio
+
 def get_globals():
     return globals()
 
 
 def add_studio(name):
+    Studio.objects.create(name=name)
     return {'status':'ok'}
 
 

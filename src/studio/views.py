@@ -47,7 +47,8 @@ def upload_log(request):
 class Logo(object):
     def __init__(self,file,studio_name):
         self.file=file
-        self.file_name='logo_{name}.{suffix}'.format(name=studio_name,suffix=file.name.split('.')[-1])
+        # self.file_name='logo_{name}.{suffix}'.format(name=studio_name,suffix=file.name.split('.')[-1])
+        self.file_name='logo_{name}'.format(name=file.name)
         self.studio=studio_name
         self.msg=[]
     
