@@ -5,11 +5,11 @@
 		{name:'link_gp',type:'text',label:'Link to GooglePlay'},
 		{name:'link_face',type:'text',label:'Link to FaceBook'},
 		{name:'link_twit',type:'text',label:'Link to Twitter'},
-		{name:'dsp',type:'area',label:'Description'},
+		{name:'dsp',type:'area',label:'description'},
 		{name:'email',type:'text',label:'Contact us email'},
 		{name:'ga_key',type:'text',label:'Google Analytics Key'},
-		{name:'policy',type:'area',label:'Private policy'}
-	];
+		{name:'policy',type:'area',label:'private policy'},
+	]
 	
 	Vue.component('field',{
 		template:'#field',
@@ -18,13 +18,13 @@
 			return {
 				fields:fields,
 				studio:studio,
-				errors:this.$parent.errors
+				errors:this.$parent.errors,
 			}
 		},
 		beforeCompile:function () {
 			for(i in fields){
 				if(fields[i].name==this.name){
-					this.item=fields[i];
+					this.item=fields[i]
 					break
 				}
 			}
@@ -43,31 +43,29 @@
 			error_data:function (name) {
 				if(this.errors[name]){
 					return this.errors[name]
-				}else if(name=='link_gp'){
-					return 'this is error ,link gp must not empty'
-				}
-				else{
+				}else{
 					return ''
 				}
 			}
 		}
-	});
+		
+	})
 	var page1=Vue.component('first-page',{
 		template:'#first-page',
 		data:function () {
 			return {
 				studio:studio,
-				errors:errors
+				errors:errors,
 			}
 		},
-		props:['editable'],
+		props:['editable',],
 		methods:{
 			mock:function () {
 				Vue.set(errors,'link_gp',['erro is error','jj yy'])
 			},
 			update_errors:function (errors) {
 				for(k in errors){
-					Vue.set(this.errors,k,errors[k]);
+					Vue.set(this.errors,k,errors[k])
 					//this.$set('errors')
 				}
 			}
@@ -80,26 +78,22 @@
 
 	<div>
 		<!--<button name="test" type="button" value="val" @click='mock()'>Button Text</button>-->
-		<div class='_row'>
-			<h2 class='row-title'>Studio Logo</h2>
-			<label for="id_for_logo"></label>
-			<file-loader id='id_for_logo'
+		<div>
+			<label for="id_for_logo">Logo</label>
+			<file-loader id='id_for_logo' 
 				accept='image/gif, image/jpeg,image/png' 
 				v-ref:logo 
 				upload_url='/studio/upload/logo/?studio=name' 
 				:url.sync='studio.logo'>
 			</file-loader>
-			<button @click='$refs.logo.upload()' :disabled='!$refs.logo.ready' class="up_btn">Upload Logo Image</button>
-			<img :src="studio.logo" alt="" v-if='studio.logo' class="logoImg">
-			<div class="interval"></div>
+			<button @click='$refs.logo.upload()' :disabled='!$refs.logo.ready'>Upload Logo Image</button>
+			<img :src="studio.logo" alt="" v-if='studio.logo'>
 		</div>
 
 		<div class='_row'>
 			<h2 class='row-title'>Link</h2>
 			<div class='cell'>
-				<field name='link_ios'>
-					<div>this is link to apple store</div>
-				</field>
+				<field name='link_ios'></field>
 				<field name='link_gp'></field>
 				<field name='link_face'></field>
 				<field name='link_twit'></field>
@@ -135,8 +129,8 @@
 		<div v-text='error_data(name)' class='error'></div>
 	    <slot>
 	    </slot>
+	    
 	</div>
-	<div class="interval"></div>
 </template>
 
 
@@ -145,26 +139,26 @@
 	Vue.component('file-loader',{
 		template:"<input model='filebody' type='file' @change='changed'>",
 		props:{
-				upload_url:{
-					type: String,
-					required: true
-				},
-				url:{
-					type: String,
-					twoWay:true
-				},
-				ready:{}
+			upload_url:{
+				type: String,
+      			required: true
+			},
+			url:{
+				type: String,
+				twoWay:true
+			},
+			ready:{},
 			},
 		methods:{
 			changed:function (changeEvent) {
-				file=changeEvent.target.files[0];
+				file=changeEvent.target.files[0]
 				this.fd = new FormData();
-				this.fd.append('file', file);
-				this.ready=true;
+				this.fd.append('file', file)
+				this.ready=true
 				alert(file)
 			},
 			upload:function () {
-				var self =this;
+				var self =this
 				$.ajax({
 					//'/studio/upload/logo/?studio=name'
 					url:this.upload_url,
@@ -173,14 +167,15 @@
 					contentType: false,
 					cache: false,
 					success:function (data) {
-						alert(data);
-						self.url=data.url;
+						alert(data)
+						self.url=data.url
 						//self.$emit('url.changed',data.url)
 					},
-					processData:false
+					processData:false,
 				})
+				
 			}
 		}
-	});
+	})
 	//<button @click='upload'>upload</button><img v-show='url' :src='url' >
 </script>

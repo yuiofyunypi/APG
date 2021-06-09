@@ -1,0 +1,152 @@
+<!--<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+<script type="text/javascript">
+
+var apps=[
+	{sku:'AAAA',icon:'xxxx',app_code:'FFFF',status:'ok',screenshots:['aaa','bbb'],meta:'jj yy ',fea_graph:'AAAA'},
+	{sku:'BBB',icon:'ZZZ',app_code:'GGG',status:'ok',screenshots:['aaa','bbb'],meta:'jj yy '},
+]
+
+Vue.component('second-page',{
+	template:'#second-page',
+	data:function () {
+		return {
+			apps:apps,
+			crt:{},
+		}
+	}
+})
+
+
+</script>
+
+
+<template id='second-page'>
+	<div>
+		<div style="overflow: hidden">
+        <div class="floatDiv">
+            <table class="table table-bordered table-hover table-responsive list_tab">
+                <tr>
+                    <th>SKU</th>
+                    <th>APP Code</th>
+                    <th>Status</th>
+                    <th>Refresh</th>
+                </tr>
+                <tr v-for='app in apps' @click='crt = app'>
+                    <td v-text='app.sku'></td>
+                    <td v-text='app.app_code'></td>
+                    <td v-text='app.status'></td>
+                    <td>
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="floatDiv">
+            <table class="table-bordered table-hover appInfo_tab">
+                <tr>
+                    <th>SKU</th>
+                    <td v-text='crt.sku'></td>
+                </tr>
+                <tr>
+                    <th>APP Icon</th>
+                    <td>
+                        <!--<img src="image/App%20Icon/icon_512.png" class="little-icon"/>-->
+                        <img :src="crt.icon" class="little-icon"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Screenshots</th>
+                    <td>
+                        <ul class="little-img">
+                            <li v-for='shot in crt.screenshots'>
+                                <img :src="shot"/>
+                            </li>
+                            <!--<li>
+                                <img src="image/Screenshots/800x1280/02.jpg"/>
+                            </li>
+                            <li>
+                                <img src="image/Screenshots/800x1280/03.jpg"/>
+                            </li>
+                            <li>
+                                <img src="image/Screenshots/800x1280/04.jpg"/>
+                            </li>-->
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Featured Graphic</th>
+                    <td>
+	                    <img :src="crt.fea_graph" class="little-feature"/>
+                        <!--<img src="image/Feature-Graphic.jpg" class="little-feature"/>-->
+                    </td>
+                </tr>
+                <tr>
+                    <th>Meta Info</th>
+                    <td class="meta" v-text='crt.meta'>
+                        Do you remember the peace and relaxation you felt when coloring as a child? Lost in an imaginary world of pictures and colors, noth
+                    </td>
+                </tr>
+                <tr>
+                    <th>Log</th>
+                    <td>aaaa</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+	</div>
+</template>
+
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        li{
+            list-style-type: none;
+        }
+        .floatDiv{
+            float: left;
+            width: 45%;
+            padding: 15px;
+        }
+        .list_tab tr{
+            cursor: pointer;
+        }
+        .appInfo_tab{
+            width: 100%;
+            table-layout:fixed;
+        }
+        .appInfo_tab th{
+            padding: 10px;
+        }
+        .appInfo_tab td{
+            padding: 10px;
+        }
+        .little-icon{
+            width: 42px;
+            cursor: pointer;
+        }
+        .little-img{
+            overflow: hidden;
+        }
+        .little-img>li{
+            float: left;
+        }
+        .little-img>li>img{
+            width: 45px;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        .little-feature{
+            height: 42px;
+            cursor: pointer;
+        }
+        .meta{
+            width:100%;
+            word-break:keep-all;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            cursor: pointer;
+        }
+    </style>
