@@ -16,26 +16,26 @@
 	//}
 	
 
-	Vue.config.delimiters = ['[[', ']]']
-
+	Vue.config.delimiters = ['[[', ']]'];
 	errors={}
+	
 	$(function () {
 		var t=new Vue({
 			el:'#vue_content',
 			data:{
 				studio:studio,
 				face_page:'first-page',
-				errors:errors,
+				errors:errors
 			},
 			methods:{
 				save:function () {
-					alert('wahaha')
+					alert('wahaha');
 					var self=this;
 					var post_data={
 						save_studio:{studio:studio}
-					}
+					};
 					$.post('',JSON.stringify(post_data),function (data) {
-						alert(data)
+						alert(data);
 						t.$refs.fp.update_errors(data.save_studio.errors)
 			
 					})
@@ -48,6 +48,7 @@
 <div id='vue_content'>
 	<div id='logo_div'>
 		<h1 v-text='studio.name'></h1>
+		<button name="test" type="button" value="val" @click="save()">Save</button>
 	</div>
 	
 	<ul class='menu'>
@@ -56,8 +57,6 @@
 		<li @click="face_page='second-page'" 
 			:class="{'active':face_page=='second-page'}">Apps</li>
 	</ul>
-
-	<button name="test" type="button" value="val" @click="save()">Save</button>
 
 	<first-page v-show='face_page=="first-page"' v-ref:fp ></first-page>
 	<second-page v-show='face_page=="second-page"'></second-page>
@@ -70,21 +69,54 @@
 
 
 <!------------------second-page---------------------->
+
 {% include "studio/second-page.html" %}
 
 <!-------------------over----------------------------->
 <style type="text/css" media="screen" id="test">
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	label{
+		font-weight: 600;
+	}
 	#logo_div{
-		width:200px;
-		height:100px;
-		border: 1px solid #999;
+		overflow: hidden;
+		padding: 15px;
+		/*border: 1px solid #999;*/
+		background: #ffffff;
+	}
+	#logo_div h1{
+		margin: auto;
+		float: left;
+	}
+	#logo_div button{
+		float: right;
+		padding: 6px 15px;
+		background: #0092F2;
+		color: #ffffff;
+		border: 0 none;
+		outline: 0 none;
+		border-radius: 4px;
+		font-weight: 600;
+		letter-spacing: 1px;
+	}
+	.menu{
+		margin: 30px auto;
+		border-bottom: 1px solid #DADCDE;
 	}
 	.menu li{
 		display: inline-block;
-		padding: 20px;
+		padding: 10px 20px;
+		font-size: 16px;
+	}
+	.menu li:hover{
+		cursor: pointer;
 	}
 	.menu .active{
-		border-bottom: 1px solid red;
+		border-bottom: 5px solid #0092F2;
+		color: #0092F2;
 	}
 	.fieldWrapper input,.fieldWrapper textarea{
 		width:90%;
@@ -92,15 +124,31 @@
 	.fieldWrapper input{
 		height:30px;
 	}
+	.logoImg{
+		margin-left: 30px;
+		max-width: 300px;
+		max-height: 120px;
+	}
+	.up_btn{
+		padding: 5px 15px;
+	}
+	._row{
+		border-bottom: 1px dashed rgba(36, 38, 96, 0.08);
+	}
 	.cell{
 		vertical-align: top;
 		width:45%;
 		display: inline-block;
 	}
+	.interval{
+		height: 20px;
+	}
 	.row-title{
-		margin-top:30px;
-		margin-bottom:30px;
-		
+		margin: 0;
+		padding: 20px 0;
+		font-size: 22px;
+		font-weight: 100;
+		color: #92979D;
 	}
 	.error{
 		color: red;
